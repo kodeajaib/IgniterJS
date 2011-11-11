@@ -11,14 +11,28 @@ controller = {
 	 * @param {Object} methods
 	 */
 	define: function(name, methods) {
-		
-		for(var i in methods) {
-			if(typeof methods[i] === 'function') {
+		methods.load = this.loader;
+
+		return {
+			name: name,
+			methods: methods
+		};
+	},
+	
+	loader: {
+		view: function(view, _fnCallback) {
+			var viewFile = serverConfig.appFolder +'/views/'+ view;
+			var fs = require('fs');
+			
+			if (!_fnCallback) {
+				return fs.readFileSync(viewFile, "binary");
 				
-				//...
-				
-				methods[i](controller.res);	
-			}
+			} else {
+				fs.readFile(viewFile, "binary", function(err, data) {
+					if(!err) _fnCallback(data);
+					else _fnCallback(err);
+				});
+			}	
 		}
 		
 	}

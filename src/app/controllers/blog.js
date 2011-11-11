@@ -1,16 +1,19 @@
 
 controller.define('blog', {
 	
-	index: function(res) {
+	blog: function() { 		//constructor, also work: "construct"
+		
+	},
+	
+	index: function(param1, param2) {
 		//get model
 		//print view
 		
-		res.writeHead(200, {'Content-Type': 'text/plain'});
- 		res.end('Hello World Blog\n');
+		return 'Index';
 	},
 	
-	test: function() {
-		
+	test: function(p1, p2, p3) {
+		console.log('1:'+p1+' 2:'+p2+' 3:'+p3);
 		return "Call Test";
 	}
 	
