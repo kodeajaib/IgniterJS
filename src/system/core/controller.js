@@ -10,12 +10,12 @@ controller = {
 	 * @param {Object} name
 	 * @param {Object} methods
 	 */
-	define: function(name, methods) {
-		methods.load = this.loader;
+	define: function(name, actions) {
+		actions.load = this.loader;
 
 		return {
 			name: name,
-			methods: methods
+			actions: actions
 		};
 	},
 	

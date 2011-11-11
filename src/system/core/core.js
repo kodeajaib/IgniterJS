@@ -42,7 +42,7 @@ var core = {
 		require('fs').readFile(controllerFile, "binary", function(err, data) {
 			if (!err) {
 				var userController = eval(data);
-				that.router.processMethods(res, userController, params);
+				that.router.processActions(res, userController, params);
 				res.end();
 				
 			} else {
@@ -62,32 +62,32 @@ var core = {
 		 * @param {Object} c
 		 * @param {Array} params
 		 */
-		processMethods: function(res, userControl, params) {
+		processActions: function(res, userControl, params) {
 			var outReturn = null;
 			
 			//Execute constructors
-			if(this.findMethod(userControl.methods, userControl.name)) {
-				userControl.methods[userControl.name]();
+			if(this.findAction(userControl.actions, userControl.name)) {
+				userControl.actions[userControl.name]();
 			}
-			if(this.findMethod(userControl.methods, 'construct')) {
-				userControl.methods['construct']();
+			if(this.findAction(userControl.actions, 'construct')) {
+				userControl.actions['construct']();
 			}
 			
 			//Execute selected method
 			if(params.length > 0 && params[0] != "") {
-				var method = params[0];
-				if(this.findMethod(userControl.methods, method)) {
-					outReturn = userControl.methods[method](params.slice(1));
+				var action = params[0];
+				if(this.findAction(userControl.actions, action)) {
+					outReturn = userControl.actions[action](params.slice(1));
 					
 				} else {
 					//Error
-					outReturn = 'Method /'+userControl.name+'/'+method+' not found.';
+					outReturn = 'Method /'+userControl.name+'/'+action+' not found.';
 				}
 				
 			} else {
 				//Execute index function
-				if(this.findMethod(userControl.methods,'index')) {
-					outReturn = userControl.methods['index'](params);
+				if(this.findAction(userControl.actions,'index')) {
+					outReturn = userControl.actions['index'](params);
 					
 				} else {
 					//Error
@@ -105,11 +105,11 @@ var core = {
 		 * @param {Object} object
 		 * @param {String} method
 		 */
-		findMethod: function(object, method) {
+		findAction: function(object, action) {
 			if(typeof object !== 'object') return false;
 				
 			for(var i in object) {
-				if(i == method) {
+				if(i == action) {
 					return true;
 				}
 			}
