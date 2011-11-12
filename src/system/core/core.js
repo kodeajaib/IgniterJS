@@ -2,6 +2,7 @@
  * Requires
  */
 require(__dirname+'/controller.js');
+require(__dirname+'/model.js');
 
 /**
  * HTTP Server
