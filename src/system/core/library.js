@@ -1,19 +1,19 @@
 /**
- * Model Core Object
+ * Library Core Object
  */
-model = {
+library = {
 	
 	/**
 	 * define
-	 * Register new model in user controller
+	 * Register new library in user controller
 	 * @param {String} name
 	 * @param {Object} actions
 	 */
-	define: function(name, actions) {
+	define: function(name, actions) {		
 		return {
 			name: name,
 			actions: actions
-		};	
+		};
 	}
 	
 };

@@ -22,6 +22,10 @@ controller = {
 		return this.tempController;
 	},
 	
+	response: function(data) {
+		EventEmitter.emit('IJSasyncListener', data);
+	},
+	
 	/**
 	 * Loader
 	 */
@@ -56,17 +60,16 @@ controller = {
 		 * @param {String} alias
 		 */
 		model: function(modelName, alias) {			
-			var modelFile = serverConfig.appFolder +'/models/'+ modelName +'.js';
-			var fs = require('fs');
-			
-			var modelData = fs.readFileSync(modelFile, "binary");
-			var userModel = eval(modelData);
-			
-			var modelAlias = modelName;
-			if(alias) modelAlias = alias;
-			
-			//TODO: Find another solution to controller.tempController 
-			controller.tempController.actions[modelAlias] = userModel.actions;
+			controller.process.loadModule('models',modelName, alias);
+		},
+		
+		/**
+		 * library
+		 * @param {String} libName
+		 * @param {String} alias
+		 */
+		library: function(libName, alias) {
+			controller.process.loadModule('libraries', libName, alias);
 		}
 		
 	},
@@ -77,6 +80,20 @@ controller = {
 	process: {
 		view: function(viewData, data) {
 			return viewData;
+		},
+		
+		loadModule: function(type, moduleName, alias) {
+			var file = serverConfig.appFolder +'/'+ type +'/'+ moduleName +'.js';
+			var fs = require('fs');
+			
+			var fileData = fs.readFileSync(file, "binary");
+			var fileObject = eval(fileData);
+			
+			var moduleAlias = moduleName;
+			if(alias) moduleAlias = alias;
+			
+			//TODO: Find another solution to controller.tempController 
+			controller.tempController.actions[moduleAlias] = fileObject.actions;
 		}
 	}
 	

@@ -2,7 +2,9 @@
  * Requires
  */
 require(__dirname+'/controller.js');
+require(__dirname+'/library.js');
 require(__dirname+'/model.js');
+require(__dirname+'/events.js');
 
 /**
  * HTTP Server
@@ -42,9 +44,9 @@ var core = {
 		
 		require('fs').readFile(controllerFile, "binary", function(err, data) {
 			if (!err) {
+				controller.res = res;
 				var userController = eval(data);
 				that.router.processActions(res, userController, params);
-				res.end();
 				
 			} else {
 				res.end('File '+controllerFile+' not found')
@@ -63,8 +65,14 @@ var core = {
 		 * @param {Object} c
 		 * @param {Array} params
 		 */
-		processActions: function(res, userControl, params) {
+		processActions: function(res, userControl, params) {	
 			var outReturn = null;
+			
+			EventEmitter.on('IJSasyncListener', function(data) {
+				res.writeHead(200);
+				if(data) res.write(data);
+				res.end();
+			});
 			
 			//Execute constructors
 			if(this.findAction(userControl.actions, userControl.name)) {
@@ -96,8 +104,9 @@ var core = {
 				}
 			}
 			
-			if(outReturn) 
-				res.write(outReturn);
+			if (outReturn) {
+				EventEmitter.emit('IJSasyncListener', outReturn);	
+			}
 		},
 		
 		/**
