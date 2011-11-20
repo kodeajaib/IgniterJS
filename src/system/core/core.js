@@ -66,8 +66,9 @@ var core = {
 		 * @param {Array} params
 		 */
 		processActions: function(res, userControl, params) {	
-			var outReturn = null;
+			var output = null;
 			
+			//Register response/end output event
 			EventEmitter.on('IJSasyncListener', function(data) {
 				res.writeHead(200);
 				if(data) res.write(data);
@@ -86,26 +87,27 @@ var core = {
 			if(params.length > 0 && params[0] != "") {
 				var action = params[0];
 				if(this.findAction(userControl.actions, action)) {
-					outReturn = userControl.actions[action](params.slice(1));
+					var innerParams = this.trimArray(params.slice(1));
+					output = userControl.actions[action].apply(userControl.actions, innerParams);
 					
 				} else {
 					//Error
-					outReturn = 'Method /'+userControl.name+'/'+action+' not found.';
+					output = 'Method /'+userControl.name+'/'+action+' not found.';
 				}
 				
 			} else {
 				//Execute index function
 				if(this.findAction(userControl.actions,'index')) {
-					outReturn = userControl.actions['index'](params);
+					output = userControl.actions['index'](params);
 					
 				} else {
 					//Error
-					outReturn = 'Index method has not been found.';
+					output = 'Index method has not been found.';
 				}
 			}
 			
-			if (outReturn) {
-				EventEmitter.emit('IJSasyncListener', outReturn);	
+			if (output) {
+				EventEmitter.emit('IJSasyncListener', output);	
 			}
 		},
 		
@@ -113,7 +115,7 @@ var core = {
 		 * findMethod
 		 * Helper function
 		 * @param {Object} object
-		 * @param {String} method
+		 * @param {String} action
 		 */
 		findAction: function(object, action) {
 			if(typeof object !== 'object') return false;
@@ -124,6 +126,23 @@ var core = {
 				}
 			}
 			return false;
+		},
+		
+		/**
+		 * trimArray
+		 * Helper function
+		 * @param {Array} arr
+		 */
+		trimArray: function(arr) {
+			var arr1 = [];
+			for (i = 0; i < arr.length; i++) {
+				if (arr[i] != "")
+					arr1[arr1.length] = arr[i];
+			}
+			arr.length = arr1.length;
+			for(i=0; i<arr1.length; i++)
+				arr[i] = arr1[i];
+			return arr;
 		}
 	}
 	

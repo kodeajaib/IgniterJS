@@ -1,13 +1,12 @@
 
 controller.define('blog', {
 	
-	blog: function() { 		//constructor, also work: "construct"
-		//load global model to use in all methods
-		this.load.model('blog_model');
+	blog: function() { 					//constructor, also work: "construct"
+		this.load.model('blog_model');	//load global model to use in all methods
 	},
 	
-	index: function(param1, param2) {		
-		//use model
+	index: function() {		
+		//using model loaded in constructor
 		var posts = this.blog_model.getPosts();
 		
 		//give data to view and print
@@ -18,7 +17,7 @@ controller.define('blog', {
 	
 	test: function(p1, p2, p3) {
 		console.log('1:'+p1+' 2:'+p2+' 3:'+p3);
-		return "Call Test";
+		return "Call Test "+p1;
 	},
 	
 	/*

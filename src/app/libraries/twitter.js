@@ -7,12 +7,11 @@ library.define('twitter', {
 		//URL: http://www.fusioncube.net/index.php/node-js-basics-and-twitter-search
 		//Script: http://www.fusioncube.net/code/TwitterSearch.js
 		var req = require('http').request({
-	      	host: "api.twitter.com",
-	      	port: 80,
-	      	method: "GET",
-	    	//path: "/1/statuses/public_timeline.json"
+			host: "api.twitter.com",
+			port: 80,
+			method: "GET",
 			path: "/1/statuses/user_timeline.json?screen_name=fayerwayer&count=3"
-	   	});
+		});
 		req.on('response', function(res) {
 			var body = "";
 			
