@@ -79,7 +79,7 @@ controller = {
 	 */
 	process: {
 		view: function(viewData, data) {
-			return viewData;
+			return Mustache.to_html(viewData, data);
 		},
 		
 		loadModule: function(type, moduleName, alias) {

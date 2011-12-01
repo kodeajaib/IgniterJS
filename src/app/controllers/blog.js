@@ -1,23 +1,25 @@
 
 controller.define('blog', {
 	
+	/*
+	 * Constructor
+	 */
 	blog: function() { 					//constructor, also work: "construct"
 		this.load.model('blog_model');	//load global model to use in all methods
 	},
 	
+	/*
+	 * Index action
+	 */
 	index: function() {		
 		//using model loaded in constructor
 		var posts = this.blog_model.getPosts();
 		
 		//give data to view and print
-		return this.load.view('a.html', {
+		return this.load.view('blog.html', {
+			title: 'My blog!',
 			posts: posts
 		});
-	},
-	
-	test: function(p1, p2, p3) {
-		console.log('1:'+p1+' 2:'+p2+' 3:'+p3);
-		return "Call Test "+p1;
 	},
 	
 	/*

@@ -6,6 +6,8 @@ require(__dirname+'/library.js');
 require(__dirname+'/model.js');
 require(__dirname+'/events.js');
 
+require(__dirname+'/../libraries/mustache.js');
+
 /**
  * HTTP Server
  */
