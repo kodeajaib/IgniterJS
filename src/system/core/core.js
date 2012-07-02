@@ -18,6 +18,7 @@ http.createServer(function (req, res) {
 }).listen(serverConfig.port, serverConfig.host);
 console.log('Server running at http://'+serverConfig.host+':'+serverConfig.port+'/');
 
+var qs = require('querystring');
 /**
  * Core Base Object
  */
@@ -29,9 +30,29 @@ var core = {
 	 * @param {Object} res
 	 */
 	processRequest: function(req, res) {
+		//POST
+		if(req.method === "POST") {
+		    var data = "";
+		    req.on("data", function(chunk) {
+		        data += chunk;
+		    });
+		
+		    req.on("end", function() {
+		        var jsonPostData = qs.parse(data);
+				core.execRequest(req, res, jsonPostData);
+		    });
+		}		
+
+		//GET
+		if(req.method === "GET") {
+			this.execRequest(req, res);
+		}
+	},
+	
+	execRequest: function(req, res, postParams) {	
 		var urlRequest = req.url.split('/');
-		var params = urlRequest.slice(2);
-		this.findController(res, urlRequest[1], params);
+		var params = this.router.trimArray(urlRequest.slice(2));
+		this.findController(res, urlRequest[1], params, postParams);
 	},
 	
 	/**
@@ -40,7 +61,7 @@ var core = {
 	 * @param {String} controllerName
 	 * @param {Array} params
 	 */
-	findController: function(res, controllerName, params) {
+	findController: function(res, controllerName, params, postParams) {
 		var that = this;
 		var controllerFile = serverConfig.appFolder + '/controllers/' + controllerName + '.js';
 		
@@ -48,6 +69,14 @@ var core = {
 			if (!err) {
 				controller.res = res;
 				var userController = eval(data);
+				
+				//Add POST params to input.post object
+				if(postParams) {
+					userController.actions.input = { 
+						post: postParams 
+					};
+				}
+				
 				that.router.processActions(res, userController, params);
 				
 			} else {
@@ -72,7 +101,6 @@ var core = {
 			
 			//Register response/end output event
 			EventEmitter.on('IJSasyncListener', function(data) {
-				res.writeHead(200);
 				if(data) res.write(data);
 				res.end();
 			});
